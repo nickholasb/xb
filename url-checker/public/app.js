@@ -5,11 +5,37 @@ const results = document.querySelector('#results');
 const details = document.querySelector('#details');
 const summary = document.querySelector('#summary');
 const note = document.querySelector('#note');
+const pasteBtn = document.querySelector('#pasteBtn');
+const copyBtn = document.querySelector('#copyBtn');
+let analyzedUrl = '';
+
+if (window.lucide) lucide.createIcons();
+
+pasteBtn.addEventListener('click', async () => {
+  try {
+    input.value = await navigator.clipboard.readText();
+    input.focus();
+  } catch {
+    status.textContent = 'Clipboard tidak dapat diakses. Tempel URL secara manual.';
+  }
+});
+
+copyBtn.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(analyzedUrl);
+    status.textContent = 'URL berhasil disalin.';
+  } catch {
+    status.textContent = 'Gagal menyalin URL. Silakan salin secara manual.';
+  }
+});
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
-  status.textContent = 'Analyzing URL metadata…';
-  results.hidden = true;
+  status.textContent = 'Menganalisis metadata URL…';
+  results.classList.add('hidden');
+  const submitButton = form.querySelector('button[type="submit"]');
+  submitButton.disabled = true;
+
   try {
     const response = await fetch('/api/check-url', {
       method: 'POST',
@@ -17,12 +43,13 @@ form.addEventListener('submit', async (event) => {
       body: JSON.stringify({ url: input.value.trim() })
     });
     const data = await response.json();
-    if (!response.ok) throw new Error(data.error || 'Unable to analyze this URL.');
+    if (!response.ok) throw new Error(data.error || 'Tidak dapat menganalisis URL.');
 
+    analyzedUrl = data.metadata.url;
     const labels = {
-      url: 'URL', protocol: 'Protocol', hostname: 'Hostname', path: 'Path',
-      usesHttps: 'Uses HTTPS', hasNonstandardPort: 'Nonstandard port',
-      queryParameterCount: 'Query parameter count'
+      url: 'URL', protocol: 'Protokol', hostname: 'Hostname', path: 'Path',
+      usesHttps: 'Menggunakan HTTPS', hasNonstandardPort: 'Port nonstandar',
+      queryParameterCount: 'Jumlah parameter query'
     };
     details.replaceChildren();
     for (const [key, label] of Object.entries(labels)) {
@@ -34,9 +61,12 @@ form.addEventListener('submit', async (event) => {
     }
     summary.textContent = data.aiSummary;
     note.textContent = data.note;
-    results.hidden = false;
-    status.textContent = 'Analysis complete.';
+    results.classList.remove('hidden');
+    status.textContent = 'Analisis selesai.';
+    if (window.lucide) lucide.createIcons();
   } catch (error) {
-    status.textContent = error.message;
+    status.textContent = error.message || 'Terjadi kesalahan saat menganalisis URL.';
+  } finally {
+    submitButton.disabled = false;
   }
 });

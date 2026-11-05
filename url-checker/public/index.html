@@ -1,38 +1,49 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="id">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Inspect URL metadata with an optional AI explanation.">
-  <title>AI URL Safety Checker</title>
+  <meta name="description" content="Periksa metadata tautan dan dapatkan penjelasan AI Gemini.">
+  <title>AI Link Analyzer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="/styles.css">
 </head>
-<body>
-  <main class="wrap">
-    <header>
-      <p class="eyebrow">URL METADATA TOOL</p>
-      <h1>Check a link before you open it</h1>
-      <p class="intro">Review basic URL signals and get an optional Gemini explanation.</p>
-    </header>
-    <section class="card">
-      <form id="checker-form">
-        <label for="url">Website URL</label>
-        <div class="row">
-          <input id="url" name="url" type="url" placeholder="https://example.com" required maxlength="2048" autocomplete="url">
-          <button type="submit">Analyze</button>
+<body class="min-h-screen flex flex-col">
+  <header class="glass sticky top-0 z-10 py-4 px-5">
+    <div class="max-w-4xl mx-auto flex justify-between items-center">
+      <div class="flex items-center gap-2 text-xl font-bold"><i data-lucide="bot" class="text-amber-400"></i><span class="brand">AI Link Analyzer</span></div>
+      <div class="text-xs text-slate-300 flex items-center gap-2"><span class="dot"></span> Gemini via server</div>
+    </div>
+  </header>
+  <main class="max-w-3xl mx-auto w-full px-4 py-12 flex-grow">
+    <div class="text-center mb-8">
+      <p class="eyebrow">PEMERIKSA METADATA TAUTAN</p>
+      <h1 class="text-3xl md:text-5xl font-extrabold mb-3">Periksa tautan sebelum dibuka</h1>
+      <p class="text-slate-400">Lihat sinyal dasar URL dan minta Gemini menjelaskannya.</p>
+    </div>
+    <section class="glass rounded-2xl p-6 md:p-8 shadow-2xl">
+      <form id="checker-form" class="space-y-4">
+        <label for="url" class="block text-sm font-medium text-slate-300">Tempelkan URL</label>
+        <div class="relative">
+          <input type="url" id="url" name="url" required maxlength="2048" autocomplete="url" placeholder="https://example.com" class="url-input w-full rounded-xl py-3.5 pl-4 pr-14 text-sm md:text-base">
+          <button type="button" id="pasteBtn" class="paste-button" aria-label="Tempel URL" title="Tempel URL"><i data-lucide="clipboard"></i></button>
         </div>
+        <button type="submit" id="submitBtn" class="submit-button w-full font-bold py-3.5 rounded-xl flex items-center justify-center gap-2"><i data-lucide="sparkles"></i><span>Analisis URL dengan Gemini</span></button>
       </form>
-      <p id="status" class="status" role="status" aria-live="polite"></p>
-      <section id="results" class="results" hidden aria-live="polite">
-        <h2>URL details</h2>
-        <dl id="details" class="details"></dl>
-        <h2>Gemini summary</h2>
+      <p id="status" class="status mt-4" role="status" aria-live="polite"></p>
+      <section id="results" class="hidden mt-5 p-4 rounded-xl result-box" aria-live="polite">
+        <div class="flex items-center gap-2 text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-4"><i data-lucide="scan-eye"></i> Hasil pemeriksaan</div>
+        <h2 class="font-semibold mb-2">Metadata URL</h2>
+        <dl id="details" class="details mb-5"></dl>
+        <div class="flex items-center justify-between gap-3 mb-2"><h2 class="font-semibold">Ringkasan Gemini</h2><button id="copyBtn" type="button" class="copy-button"><i data-lucide="copy"></i> Salin URL</button></div>
         <p id="summary" class="summary"></p>
-        <p id="note" class="note"></p>
+        <p id="note" class="note mt-3"></p>
       </section>
     </section>
-    <footer>This tool parses metadata only. It does not open links, follow redirects, or bypass access controls. AI output is not a guarantee of safety.</footer>
+    <p class="disclaimer mt-5 text-center text-xs">Pemeriksaan ini hanya membaca metadata URL. Server tidak membuka tautan atau mengikuti redirect, dan analisis AI bukan jaminan keamanan.</p>
   </main>
+  <footer class="py-5 text-center text-xs text-slate-500">Gemini API key disimpan di server, bukan di browser.</footer>
   <script src="/app.js" defer></script>
 </body>
 </html>
